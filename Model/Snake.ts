@@ -4,7 +4,7 @@
 
 module Model {
     export class Snake {
-        public static get FIRST_LENGTH():number { return 5; }
+        public static get INITIAL_LENGTH():number { return 5; }
         
         
         public pointers: Array<Pointer>;
@@ -19,7 +19,7 @@ module Model {
         
         private create_snake() {
             var length = 5; //Length of the snake
-            for(var i = Snake.FIRST_LENGTH-1; i>=0; i--)
+            for(var i = Snake.INITIAL_LENGTH-1; i>=0; i--)
             {
                 //This will create a horizontal snake starting from the top left
                 this.pointers.push({x: i, y:0});

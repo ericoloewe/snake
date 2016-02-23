@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Snake Game</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Snake Game</title>
+        <style>
+            #canvas {
+                margin: 0 auto;
+                display: table;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- The canvas -->
+        <canvas id="canvas" width="400" height="400"></canvas>
 
-<body>
-    <!-- Lets make a simple snake game -->
-    <canvas id="canvas" width="450" height="450"></canvas>
-
-    <!-- Jquery -->
-    <script src="Extensions/Jquery/jquery-2.2.0.min.js" type="text/javascript"></script>
-    <script src="lib/Model/Snake.js" type="text/javascript"></script>
-    <script src="lib/Model/Food.js" type="text/javascript"></script>
-    <script src="lib/Model/Arena.js" type="text/javascript"></script>
-    <script src="lib/Model/Direction.js" type="text/javascript"></script>
-    <script src="lib/main.js" type="text/javascript"></script>
-</body>
-
+        <!-- js -->
+        <script src="Extensions/Jquery/jquery-2.2.0.min.js" type="text/javascript"></script>
+        <script src="lib/Model/Snake.js" type="text/javascript"></script>
+        <script src="lib/Model/Food.js" type="text/javascript"></script>
+        <script src="lib/Model/Direction.js" type="text/javascript"></script>
+        <script src="lib/Model/Arena.js" type="text/javascript"></script>    
+        <script src="lib/main.js" type="text/javascript"></script>
+    </body>
 </html>
