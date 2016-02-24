@@ -11,26 +11,35 @@ module Model {
         public cellWidth: number;
         public snake: Snake;
         public food: Food;
+        public game_loop: any;
         
         constructor() {  
-            this.init();
+            this.food = new Food();
+            this.snake = new Snake();
+            this.game_loop = undefined;
+            this.canvas = null;
+            this.context = null;            
         }
         
-        private init()
-        {
+        public init()
+        {            
             this.snake.direction = Direction.right; //default direction
             this.food.create_food(Math.round(Math.random()*(this.width-this.cellWidth)/this.cellWidth), Math.round(Math.random()*(this.height-this.cellWidth)/this.cellWidth));
-            //finally lets display the score
-            this.snake.score = 0;
-            
+            this.paintWall();            
+        }
+        
+        public reinit()
+        {
+            var _this = this;            
             //Lets move the snake now using a timer which will trigger the paint function
             //every 60ms
-            if(typeof game_loop != "undefined") clearInterval(game_loop);
-            game_loop = setInterval(this.paint, 60);
+            if(typeof this.game_loop != "undefined") 
+                clearInterval(this.game_loop);
+            this.game_loop = setInterval(function() {_this.paint();}, 60);
         }
         
         //Lets first create a generic function to paint cells
-        public paint_cell(x:number, y:number)
+        private paintCell(x:number, y:number)
         {
             this.context.fillStyle = "blue";
             this.context.fillRect(x*this.cellWidth, y*this.cellWidth, this.cellWidth, this.cellWidth);
@@ -38,37 +47,38 @@ module Model {
             this.context.strokeRect(x*this.cellWidth, y*this.cellWidth, this.cellWidth, this.cellWidth);
         }
         
-        //Lets paint the snake now
-        public paint()
-        {
-            //To avoid the snake trail we need to paint the BG on every frame
+        private paintWall() {
             //Lets paint the canvas now
             this.context.fillStyle = "white";
             this.context.fillRect(0, 0, this.width, this.height);
             this.context.strokeStyle = "black";
             this.context.strokeRect(0, 0, this.width, this.height);
+        }
+        
+        //Lets paint the snake now
+        private paint()
+        {            
+            //To avoid the snake trail we need to paint the BG on every frame            
             
             //The movement code for the snake to come here.
             //The logic is simple
             //Pop out the tail cell and place it infront of the head cell
-            var nx = this.snake.pointers[0].x;
-            var ny = this.snake.pointers[0].y;
+            
+            // this.snake.face
+            
             //These were the position of the head cell.
             //We will increment it to get the new head position
             //Lets add proper direction based movement now
-            if(this.snake.direction == Direction.right) nx++;
-            else if(this.snake.direction == Direction.left) nx--;
-            else if(this.snake.direction == Direction.up) ny--;
-            else if(this.snake.direction == Direction.down) ny++;
+            this.checkDirection();            
             
             //Lets add the game over clauses now
             //This will restart the game if the snake hits the wall
             //Lets add the code for body collision
             //Now if the head of the snake bumps into its body, the game will restart
-            if(nx == -1 || nx == this.width/this.cellWidth || ny == -1 || ny == this.height/this.cellWidth || this.check_collision(nx, ny, this.snake))
+            if(this.snake.face.x == -1 || this.snake.face.x == this.width/this.cellWidth || this.snake.face.y == -1 || this.snake.face.y == this.height/this.cellWidth || this.checkCollision())
             {
                 //restart game
-                this.init();
+                this.reinit();
                 //Lets organize the code a bit now.
                 return;
             }
@@ -77,18 +87,19 @@ module Model {
             //The logic is simple
             //If the new head position matches with that of the this.food,
             //Create a new head instead of moving the tail
-            var tail = {x:null, y:null};
-            if(nx == this.food.pointers.x && ny == this.food.pointers.y)
+            var tail = new Pointer();
+            if(this.snake.face.x == this.food.pointers.x && this.snake.face.y == this.food.pointers.y)
             {
-                tail = {x: nx, y: ny};
-                this.snake.score++;
+                tail = this.snake.face;
+                this.snake.score.actual++;
                 //Create new this.food
                 this.food.create_food(Math.round(Math.random()*(this.width-this.cellWidth)/this.cellWidth), Math.round(Math.random()*(this.height-this.cellWidth)/this.cellWidth));
             }
             else
             {
                 tail = this.snake.pointers.pop(); //pops out the last cell
-                tail.x = nx; tail.y = ny;
+                tail.x = this.snake.face.x; 
+                tail.y = this.snake.face.y;
             }
             //The snake can now eat the this.food.
             
@@ -98,25 +109,32 @@ module Model {
             {
                 var c = this.snake.pointers[i];
                 //Lets paint 10px wide cells
-                this.paint_cell(c.x, c.y);
+                this.paintCell(c.x, c.y);
             }
             
             //Lets paint the this.food
-            this.paint_cell(this.food.pointers.x, this.food.pointers.y);
+            this.paintCell(this.food.pointers.x, this.food.pointers.y);
             //Lets paint the score
-            var score_text = "Score: " + this.snake.score;
-            this.context.fillText(score_text, 5, this.height-5);
+            this.context.fillText(this.snake.score.toString(), 5, this.height-5);
         }
         
-        private check_collision(x, y, snake)
+        private checkDirection()
+        {
+            if(this.snake.direction == Direction.right) this.snake.face.x++;
+            else if(this.snake.direction == Direction.left) this.snake.face.x--;
+            else if(this.snake.direction == Direction.up) this.snake.face.y--;
+            else if(this.snake.direction == Direction.down) this.snake.face.y++;
+        }
+        
+        private checkCollision()
         {
             var array = this.snake.pointers;
             //This function will check if the provided x/y coordinates exist
             //in an array of cells or not
             for(var i = 0; i < array.length; i++)
             {
-                if(array[i].x == x && array[i].y == y)
-                return true;
+                if(array[i].x == this.snake.face.x && array[i].y == this.snake.face.y)
+                    return true;
             }
             return false;
         }

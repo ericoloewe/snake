@@ -12,13 +12,15 @@ arena.snake = new Model.Snake();
 $(document).ready(function(){
     //Canvas stuff
     arena.canvas = $("#canvas")[0];
-    arena.context = arena.canvas.getContext("2d");    
+    arena.context = arena.canvas.getContext("2d");
     arena.width = arena.canvas.width;
     arena.height = arena.canvas.height;
     
     //Lets save the cell width in a variable for easy control
     arena.cellWidth = 10;
     
+    setInterval(arena.init(),1000);
+        
     //Lets add the keyboard controls now
     $(document).keydown(function(e){
         var key = e.which;
