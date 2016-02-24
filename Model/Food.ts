@@ -4,10 +4,10 @@
 
 module Model {
     export class Food {
-        public pointers: Pointer;
+        public pointer: Pointer;
         
         constructor();
-        constructor(foodPointerX: number, foodPointerY: number);        
+        constructor(foodPointerX: number, foodPointerY: number);
         constructor(foodPointerX?: number, foodPointerY?: number) {
             this.create_food(foodPointerX, foodPointerY);
         }
@@ -15,7 +15,7 @@ module Model {
         //Lets create the food now
         public create_food(foodPointerX: number, foodPointerY: number)
         {
-            this.pointers = {
+            this.pointer = {
                 x: foodPointerX, 
                 y: foodPointerY, 
             };

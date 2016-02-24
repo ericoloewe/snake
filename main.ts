@@ -5,9 +5,6 @@
 /// <reference path="Model/Arena.ts" />
 
 var arena = new Model.Arena();
-arena.food = new Model.Food();
-arena.snake = new Model.Snake();
-
 
 $(document).ready(function(){
     //Canvas stuff
