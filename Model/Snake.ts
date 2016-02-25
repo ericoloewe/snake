@@ -25,11 +25,18 @@ module Model {
         }
         
         private create_snake() {
-            for(var i = Snake.INITIAL_LENGTH-1; i >= 0 ; i--)
-            {                
+            this.pointers = new Array<Pointer>(new Pointer(0,0));
+            for(var i = 0; i <= Snake.INITIAL_LENGTH-1 ; i++)
+            {
                 //This will create a horizontal snake starting from the top left
                 this.pointers.push(new Pointer(i,0));
             }
+            // É retirado o primeiro elemento do array porque ele estava pegando um valor randomico
+            this.pointers.shift();            
+            // Foi organizado o array, da maneira que a cabeça esteja no ponto 0
+            this.pointers.sort(function(a:Pointer,b:Pointer) {
+                return a.x < b.x
+            });
         }
     }   
 }

@@ -16,6 +16,7 @@ module Model {
         constructor() {  
             this.food = new Food();
             this.snake = new Snake();
+            console.log(this.snake);
             this.game_loop = undefined;
             this.canvas = null;
             this.context = null;            
@@ -36,6 +37,10 @@ module Model {
             var _this = this;            
             //Lets move the snake now using a timer which will trigger the paint function
             //every 60ms
+            this.snake = new Snake();
+            this.paintArena();
+            this.paintCompleteSnake();
+            this.paintFood();
             if(typeof this.game_loop != "undefined") 
                 clearInterval(this.game_loop);
             this.game_loop = setInterval(function() {_this.paint();}, 60);
@@ -54,19 +59,16 @@ module Model {
             //Lets paint the canvas now
             this.context.fillStyle = "white";
             this.context.fillRect(0, 0, this.width, this.height);
-            this.context.strokeStyle = "black";
+            this.context.strokeStyle = "white";
             this.context.strokeRect(0, 0, this.width, this.height);
         }
         
         private paintCompleteSnake()
         {
-            //paint the snake
-            for(var i = 0; i < this.snake.pointers.length; i++)
-            {
-                var c = this.snake.pointers[i];
-                //Lets paint 10px wide cells
-                this.paintCell(c.x, c.y);
-            }
+            var _this = this;
+            this.snake.pointers.forEach(function(pointer) {
+                _this.paintCell(pointer.x, pointer.y);
+            });
         }
         
         private paintSnake()
@@ -97,7 +99,6 @@ module Model {
             //This will restart the game if the snake hits the wall
             //Lets add the code for body collision
             //Now if the head of the snake bumps into its body, the game will restart
-            console.log(this.snakeIsOut() || this.checkCollision());
             if(this.snakeIsOut() || this.checkCollision())
             {
                 //restart game
@@ -105,7 +106,6 @@ module Model {
                 //Lets organize the code a bit now.
                 return;
             }
-            console.log(this.snake);
             
             //Lets write the code to make the snake eat the this.food
             //The logic is simple
@@ -129,11 +129,7 @@ module Model {
             
             this.clearLastCell();
             
-            this.paintSnake();            
-            
-            console.log(this.snake.head);
-            console.log(this.snake.tail);   
-            console.log(this.snake);         
+            this.paintSnake();
         }
         
         private clearLastCell()
@@ -157,14 +153,13 @@ module Model {
         
         private checkCollision()
         {
-            var array = this.snake.pointers;
+            var _this = this;
             //This function will check if the provided x/y coordinates exist
             //in an array of cells or not
-            for(var i = 0; i < array.length; i++)
-            {
-                if(array[i].x == this.snake.face.x && array[i].y == this.snake.face.y)
+            this.snake.pointers.forEach(function(pointer) {
+                if(pointer.x == _this.snake.face.x && pointer.y == _this.snake.face.y)
                     return true;
-            }
+            });            
             return false;
         }
     }
