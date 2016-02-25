@@ -28,7 +28,7 @@ module Model {
             this.paintArena();
             this.paintCompleteSnake();
             this.paintFood();
-            this.paint();            
+            this.reinit();            
         }
         
         public reinit()
@@ -97,7 +97,8 @@ module Model {
             //This will restart the game if the snake hits the wall
             //Lets add the code for body collision
             //Now if the head of the snake bumps into its body, the game will restart
-            if(this.snakeIsOver() || this.checkCollision())
+            console.log(this.snakeIsOut() || this.checkCollision());
+            if(this.snakeIsOut() || this.checkCollision())
             {
                 //restart game
                 this.reinit();
@@ -110,7 +111,7 @@ module Model {
             //The logic is simple
             //If the new head position matches with that of the this.food,
             //Create a new head instead of moving the tail
-            if(this.snake.face.x == this.food.pointer.x && this.snake.face.y == this.food.pointer.y)
+            if(this.snake.head.x == this.food.pointer.x && this.snake.head.y == this.food.pointer.y)
             {
                 this.snake.head = this.snake.face;
                 this.snake.score.actual++;
@@ -148,10 +149,10 @@ module Model {
             else if(this.snake.direction == Direction.down) this.snake.face.y++;
         }
         
-        private snakeIsOver() 
+        private snakeIsOut() 
         {
-            return this.snake.face.x == -1 || this.snake.face.x == this.width/this.cellWidth || 
-                   this.snake.face.y == -1 || this.snake.face.y == this.height/this.cellWidth;
+            return this.snake.head.x == -1 || this.snake.head.x == this.width/this.cellWidth || 
+                   this.snake.head.y == -1 || this.snake.head.y == this.height/this.cellWidth;
         }
         
         private checkCollision()
