@@ -7,14 +7,15 @@
 var arena = new Model.Arena();
 
 $(document).ready(function(){
-    //Canvas stuff
-    arena.canvas = $("#canvas")[0];
-    arena.context = arena.canvas.getContext("2d");
-    arena.width = arena.canvas.width;
-    arena.height = arena.canvas.height;
-    
     //Lets save the cell width in a variable for easy control
     arena.cellWidth = 10;
+    
+    //Canvas stuff
+    arena.own = $("#arena");
+    arena.width = ($("body").width()/2)/10;
+    arena.height = 40;
+    console.log($("body").width());    
+    
     
     setInterval(arena.init(),1000);
         

@@ -1,11 +1,11 @@
+/// <reference path="../Extensions/Jquery/jquery.d.ts" />
 /*
  * Arena
  */
 
 module Model {    
     export class Arena {
-        public canvas: any;
-        public context: any;
+        public own: JQuery;
         public width: number;
         public height: number;
         public cellWidth: number;
@@ -18,14 +18,14 @@ module Model {
             this.snake = new Snake();
             console.log(this.snake);
             this.game_loop = undefined;
-            this.canvas = null;
-            this.context = null;            
+            this.own = null;          
         }
         
         public init()
         {            
             this.snake.direction = Direction.right; //default direction
-            this.food.create_food(Math.round(Math.random()*(this.width-this.cellWidth)/this.cellWidth), Math.round(Math.random()*(this.height-this.cellWidth)/this.cellWidth));
+            this.food.create_food(Math.round(Math.random()*(this.width)), Math.round(Math.random()*(this.height)));
+            this.paintArena();
             this.reinit();            
         }
         
@@ -35,8 +35,8 @@ module Model {
             //Lets move the snake now using a timer which will trigger the paint function
             //every 60ms
             this.snake = new Snake();
-            this.paintArena();
-            this.paintCompleteSnake();
+            this.cleanArena();
+            this.paintSnake();
             this.paintFood();
             if(typeof this.game_loop != "undefined") 
                 clearInterval(this.game_loop);
@@ -44,45 +44,106 @@ module Model {
         }
         
         //Lets first create a generic function to paint cells
-        private paintCell(x:number, y:number, colorFill:string = "blue", colorStroke:string = "white")
-        {
-            this.context.fillStyle = colorFill;
-            this.context.fillRect(x*this.cellWidth, y*this.cellWidth, this.cellWidth, this.cellWidth);
-            this.context.strokeStyle = colorStroke;
-            this.context.strokeRect(x*this.cellWidth, y*this.cellWidth, this.cellWidth, this.cellWidth);
+        private paintCell(x:number, y:number, cssClass:string = "activeSnake")
+        {            
+            this.own.find(".y"+y+" .x"+x).addClass(cssClass);
         }
         
-        private paintArena() {
+        //Lets first create a generic function to paint cells
+        private eraseCell(x:number, y:number, cssClass:string = "activeSnake")
+        {
+            this.own.find(".y"+y+" .x"+x).removeClass(cssClass);
+        }
+        
+        private cleanArena()
+        {
+            this.own.find("tr td").removeClass();
+        }
+        
+        private cleanSnake(cssClass:string = "activeSnake")
+        {
+            this.own.find("tr td").removeClass(cssClass);
+        }
+        
+        private cleanFood(cssClass:string = "activeFood")
+        {
+            this.own.find("tr td").removeClass(cssClass);
+        }
+        
+        private paintArena() 
+        {
             //Lets paint the canvas now
-            this.context.fillStyle = "white";
-            this.context.fillRect(0, 0, this.width, this.height);
-            this.context.strokeStyle = "white";
-            this.context.strokeRect(0, 0, this.width, this.height);
-        }
-        
-        private paintCompleteSnake()
-        {
-            var _this = this;
-            this.snake.pointers.forEach(function(pointer) {
-                _this.paintCell(pointer.x, pointer.y);
-            });
-        }
-        
-        private paintSnake()
-        {
-            this.clearLastCell(); 
-            //Lets paint 10px wide cells
-            this.paintCell(this.snake.face.x, this.snake.face.y);
+            var html:string = "";
+            for(var i = 0; i < this.height; i++)
+            {
+                html += "<tr height='10' class='y"+i+"'>";                
+                for(var j = 0; j < this.width; j++)
+                    html += "<td width='10' class='x"+j+"'></td>";
+                html += "</tr>";
+            }
+            this.own.html(html);                    
         }
         
         private paintFood()
         {
             this.paintArena();
             //Lets paint the food
-            this.paintCell(this.food.pointer.x, this.food.pointer.y);
+            this.paintCell(this.food.pointer.x, this.food.pointer.y, "activeFood");
             //Lets paint the score
-            this.context.fillText(this.snake.score.toString(), 5, this.height-5);
+            $(".score").text(this.snake.score.toString());
         }
+        
+        private paintSnake()
+        {
+            var _this = this;
+            if(this.own.find("tr td.active").length === this.snake.pointers.length)
+            {
+                this.mosey();
+            } else {
+                this.cleanSnake();
+                this.snake.pointers.forEach(function(pointer) {
+                    _this.paintCell(pointer.x, pointer.y);
+                });
+            }
+        }
+        
+        private clearLastCell()
+        {
+            this.eraseCell(this.snake.before_tail.x, this.snake.before_tail.y);
+        }
+        
+        private checkDirection()
+        {
+            if(this.snake.direction == Direction.right) this.snake.face.x++;
+            else if(this.snake.direction == Direction.left) this.snake.face.x--;
+            else if(this.snake.direction == Direction.up) this.snake.face.y--;
+            else if(this.snake.direction == Direction.down) this.snake.face.y++;
+        }
+        
+        private snakeIsOut() 
+        {
+            return this.snake.head.x == -1 || this.snake.head.x == this.width|| 
+                   this.snake.head.y == -1 || this.snake.head.y == this.height;
+        }
+        
+        private checkCollision()
+        {
+            var _this = this;
+            //This function will check if the provided x/y coordinates exist
+            //in an array of cells or not
+            this.snake.pointers.forEach(function(pointer) {
+                if(pointer.x == _this.snake.face.x && pointer.y == _this.snake.face.y)
+                    return true;
+            });            
+            return false;
+        }
+        
+        private mosey()
+        {
+            this.clearLastCell(); 
+            //Lets paint 10px wide cells
+            this.paintCell(this.snake.face.x, this.snake.face.y);
+        }        
         
         //Lets paint the snake now
         private paint()
@@ -114,7 +175,7 @@ module Model {
                 this.snake.head = this.snake.face;
                 this.snake.score.actual++;
                 //Create new this.food
-                this.food.create_food(Math.round(Math.random()*(this.width-this.cellWidth)/this.cellWidth), Math.round(Math.random()*(this.height-this.cellWidth)/this.cellWidth));
+                this.food.create_food(Math.round(Math.random()*(this.width)), Math.round(Math.random()*(this.height)));
                 this.paintFood();
             }
             else
@@ -126,42 +187,11 @@ module Model {
             
             this.snake.pointers.unshift(this.snake.head);                       
             this.paintSnake();
+            console.log(this);
             
             setTimeout(function() {
                 debugger;
-            }, 3000);
-        }
-        
-        private clearLastCell()
-        {
-            console.log(this.snake.before_tail);
-            this.paintCell(this.snake.before_tail.x, this.snake.before_tail.y, "white");
-        }
-        
-        private checkDirection()
-        {
-            if(this.snake.direction == Direction.right) this.snake.face.x++;
-            else if(this.snake.direction == Direction.left) this.snake.face.x--;
-            else if(this.snake.direction == Direction.up) this.snake.face.y--;
-            else if(this.snake.direction == Direction.down) this.snake.face.y++;
-        }
-        
-        private snakeIsOut() 
-        {
-            return this.snake.head.x == -1 || this.snake.head.x == this.width/this.cellWidth || 
-                   this.snake.head.y == -1 || this.snake.head.y == this.height/this.cellWidth;
-        }
-        
-        private checkCollision()
-        {
-            var _this = this;
-            //This function will check if the provided x/y coordinates exist
-            //in an array of cells or not
-            this.snake.pointers.forEach(function(pointer) {
-                if(pointer.x == _this.snake.face.x && pointer.y == _this.snake.face.y)
-                    return true;
-            });            
-            return false;
-        }
+            }, 10000);
+        }        
     }
 }
