@@ -26,9 +26,6 @@ module Model {
         {            
             this.snake.direction = Direction.right; //default direction
             this.food.create_food(Math.round(Math.random()*(this.width-this.cellWidth)/this.cellWidth), Math.round(Math.random()*(this.height-this.cellWidth)/this.cellWidth));
-            this.paintArena();
-            this.paintCompleteSnake();
-            this.paintFood();
             this.reinit();            
         }
         
@@ -73,6 +70,7 @@ module Model {
         
         private paintSnake()
         {
+            this.clearLastCell(); 
             //Lets paint 10px wide cells
             this.paintCell(this.snake.face.x, this.snake.face.y);
         }
@@ -92,7 +90,7 @@ module Model {
             //These were the position of the head cell.
             //We will increment it to get the new head position
             //Lets add proper direction based movement now
-            this.snake.before_tail = this.snake.pointers[this.snake.pointers.length-1];
+            this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];
             this.checkDirection();
             
             //Lets add the game over clauses now
@@ -121,19 +119,22 @@ module Model {
             }
             else
             {
+                this.snake.before_tail = this.snake.tail;
                 this.snake.tail = this.snake.pointers.pop(); //pops out the last cell
-                this.snake.head = this.snake.face; 
+                this.snake.head = this.snake.face;                
             }
-            //The snake can now eat the food.            
-            this.snake.pointers.unshift(this.snake.head); //puts back the tail as the first cell
             
-            this.clearLastCell();
-            
+            this.snake.pointers.unshift(this.snake.head);                       
             this.paintSnake();
+            
+            setTimeout(function() {
+                debugger;
+            }, 3000);
         }
         
         private clearLastCell()
         {
+            console.log(this.snake.before_tail);
             this.paintCell(this.snake.before_tail.x, this.snake.before_tail.y, "white");
         }
         

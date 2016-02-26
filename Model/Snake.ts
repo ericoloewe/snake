@@ -19,7 +19,7 @@ module Model {
             this.face = new Pointer(Snake.INITIAL_LENGTH, 0);
             this.head = new Pointer(Snake.INITIAL_LENGTH-1, 0);
             this.tail = new Pointer();            
-            this.before_tail = new Pointer();            
+            this.before_tail = new Pointer(-1,0);            
             this.score = new Score();
             this.create_snake();
         }
@@ -35,8 +35,8 @@ module Model {
             this.pointers.shift();            
             // Foi organizado o array, da maneira que a cabeça esteja no ponto 0
             this.pointers.sort(function(a:Pointer,b:Pointer) {
-                return a.x < b.x
+                return a.x < b.x ? 1 : a.x > b.x ? -1 : 0;
             });
-        }
+        } 
     }   
 }
