@@ -40,7 +40,7 @@ module Model {
             this.paintFood();
             if(typeof this.game_loop != "undefined") 
                 clearInterval(this.game_loop);
-            this.game_loop = setInterval(function() {_this.paint();}, 60);
+            this.game_loop = setInterval(function() {_this.paint();}, 100);
         }
         
         //Lets first create a generic function to paint cells
@@ -57,17 +57,20 @@ module Model {
         
         private cleanArena()
         {
-            this.own.find("tr td").removeClass();
+            this.own.find("tr td").removeClass("activeSnake");
+            this.own.find("tr td").removeClass("activeFood");
         }
         
         private cleanSnake(cssClass:string = "activeSnake")
         {
-            this.own.find("tr td").removeClass(cssClass);
+            if(this.own.find("tr td").hasClass(cssClass))
+                this.own.find("tr td").removeClass(cssClass);
         }
         
         private cleanFood(cssClass:string = "activeFood")
         {
-            this.own.find("tr td").removeClass(cssClass);
+            if(this.own.find("tr td").hasClass(cssClass))
+                this.own.find("tr td").removeClass(cssClass);
         }
         
         private paintArena() 
@@ -86,7 +89,7 @@ module Model {
         
         private paintFood()
         {
-            this.paintArena();
+            this.cleanFood();
             //Lets paint the food
             this.paintCell(this.food.pointer.x, this.food.pointer.y, "activeFood");
             //Lets paint the score
@@ -122,8 +125,14 @@ module Model {
         
         private snakeIsOut() 
         {
-            return this.snake.head.x == -1 || this.snake.head.x == this.width|| 
+            return this.snake.head.x == -1 || this.snake.head.x == this.width || 
                    this.snake.head.y == -1 || this.snake.head.y == this.height;
+        }
+        
+        private snakeEat() 
+        {
+            return this.snake.head.x == this.food.pointer.x && 
+                   this.snake.head.y == this.food.pointer.y;
         }
         
         private checkCollision()
@@ -147,17 +156,9 @@ module Model {
         
         //Lets paint the snake now
         private paint()
-        {            
-            //These were the position of the head cell.
-            //We will increment it to get the new head position
-            //Lets add proper direction based movement now
-            this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];
-            this.checkDirection();
+        {
+            this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];            
             
-            //Lets add the game over clauses now
-            //This will restart the game if the snake hits the wall
-            //Lets add the code for body collision
-            //Now if the head of the snake bumps into its body, the game will restart
             if(this.snakeIsOut() || this.checkCollision())
             {
                 //restart game
@@ -170,7 +171,7 @@ module Model {
             //The logic is simple
             //If the new head position matches with that of the this.food,
             //Create a new head instead of moving the tail
-            if(this.snake.head.x == this.food.pointer.x && this.snake.head.y == this.food.pointer.y)
+            if(this.snakeEat())
             {
                 this.snake.head = this.snake.face;
                 this.snake.score.actual++;
@@ -180,13 +181,14 @@ module Model {
             }
             else
             {
-                this.snake.before_tail = this.snake.tail;
-                this.snake.tail = this.snake.pointers.pop(); //pops out the last cell
+                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cell
+                this.snake.tail = this.snake.pointers[this.snake.pointers.length-1]; 
                 this.snake.head = this.snake.face;                
             }
             
             this.snake.pointers.unshift(this.snake.head);                       
             this.paintSnake();
+            this.checkDirection();
             console.log(this);
             
             setTimeout(function() {
