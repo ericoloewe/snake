@@ -99,7 +99,7 @@ module Model {
         private paintSnake()
         {
             var _this = this;
-            if(this.own.find("tr td.active").length === this.snake.pointers.length)
+            if(this.own.find("tr td.activeSnake").length === this.snake.pointers.length)
             {
                 this.mosey();
             } else {
@@ -152,21 +152,10 @@ module Model {
             this.clearLastCell(); 
             //Lets paint 10px wide cells
             this.paintCell(this.snake.face.x, this.snake.face.y);
-        }        
+        }
         
-        //Lets paint the snake now
-        private paint()
-        {
-            this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];            
-            
-            if(this.snakeIsOut() || this.checkCollision())
-            {
-                //restart game
-                this.reinit();
-                //Lets organize the code a bit now.
-                return;
-            }
-            
+        private changePointers()
+        {            
             //Lets write the code to make the snake eat the this.food
             //The logic is simple
             //If the new head position matches with that of the this.food,
@@ -181,19 +170,35 @@ module Model {
             }
             else
             {
-                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cell
-                this.snake.tail = this.snake.pointers[this.snake.pointers.length-1]; 
+                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cell 
                 this.snake.head = this.snake.face;                
             }
             
-            this.snake.pointers.unshift(this.snake.head);                       
+            this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];
+            
+            this.snake.pointers.unshift(this.snake.head);
+        }
+        
+        //Lets paint the snake now
+        private paint()
+        {            
+            if(this.snakeIsOut() || this.checkCollision())
+            {
+                //restart game
+                this.reinit();
+                //Lets organize the code a bit now.
+                return;
+            }       
+            
+            this.changePointers();     
+                                   
             this.paintSnake();
             this.checkDirection();
             console.log(this);
             
             setTimeout(function() {
                 debugger;
-            }, 10000);
+            }, 60);
         }        
     }
 }

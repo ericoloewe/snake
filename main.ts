@@ -12,12 +12,12 @@ $(document).ready(function(){
     
     //Canvas stuff
     arena.own = $("#arena");
-    arena.width = ($("body").width()/2)/10;
+    arena.width = 50;
     arena.height = 40;
     console.log($("body").width());    
     
     
-    setInterval(arena.init(),1000);
+    setInterval(arena.init(), 3000);
         
     //Lets add the keyboard controls now
     $(document).keydown(function(e){
