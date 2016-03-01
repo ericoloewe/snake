@@ -22,6 +22,7 @@ module Model {
             this.before_tail = new Pointer(-1,0);            
             this.score = new Score();
             this.create_snake();
+            this.direction = Direction.right;
         }
         
         private create_snake() {

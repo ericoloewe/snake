@@ -21,26 +21,53 @@ module Model {
             this.own = null;          
         }
         
+        /*
+         * Inicia realmente a Arena, montando a mesma e iniciando o jogo   
+         */
         public init()
-        {            
-            this.snake.direction = Direction.right; //default direction
+        {
+            var _this = this;
+            
             this.food.create_food(Math.round(Math.random()*(this.width)), Math.round(Math.random()*(this.height)));
+            
             this.paintArena();
-            this.reinit();            
+            this.paintSnake();
+            this.paintFood();
+            
+            this.game_loop = setInterval(function() {_this.paint();}, 50);            
         }
         
+        /*
+         * Reinicia a Arena, remontando a mesma e reiniciando o jogo   
+         */
         public reinit()
         {
-            var _this = this;            
-            //Lets move the snake now using a timer which will trigger the paint function
-            //every 60ms
+            var _this = this;
             this.snake = new Snake();
             this.cleanArena();
             this.paintSnake();
             this.paintFood();
-            if(typeof this.game_loop != "undefined") 
+            if(typeof this.game_loop != undefined) 
                 clearInterval(this.game_loop);
-            this.game_loop = setInterval(function() {_this.paint();}, 100);
+            this.game_loop = setInterval(function() {_this.paint();}, 50);
+        }
+        
+        /*
+         * Desenha os personagens a tela   
+         */
+        private paint()
+        {         
+            if(this.snakeIsOut() || this.checkCollision())
+            {
+                //Lets organize the code a bit now.
+                return;
+            }
+            
+            this.changePointers();
+            
+            this.paintSnake();
+            
+            this.checkDirection();            
         }
         
         //Lets first create a generic function to paint cells
@@ -116,11 +143,11 @@ module Model {
         }
         
         private checkDirection()
-        {
-            if(this.snake.direction == Direction.right) this.snake.face.x++;
-            else if(this.snake.direction == Direction.left) this.snake.face.x--;
+        {            
+            if(this.snake.direction == Direction.left) this.snake.face.x--;
             else if(this.snake.direction == Direction.up) this.snake.face.y--;
             else if(this.snake.direction == Direction.down) this.snake.face.y++;
+            else this.snake.face.x++;
         }
         
         private snakeIsOut() 
@@ -138,13 +165,14 @@ module Model {
         private checkCollision()
         {
             var _this = this;
+            var ocurredCollision:boolean = false;
             //This function will check if the provided x/y coordinates exist
             //in an array of cells or not
             this.snake.pointers.forEach(function(pointer) {
                 if(pointer.x == _this.snake.face.x && pointer.y == _this.snake.face.y)
-                    return true;
+                    ocurredCollision = true;
             });            
-            return false;
+            return ocurredCollision;
         }
         
         private mosey()
@@ -171,34 +199,12 @@ module Model {
             else
             {
                 this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cell 
-                this.snake.head = this.snake.face;                
+                this.snake.head = new Pointer(this.snake.face.x,this.snake.face.y);                
             }
             
             this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];
             
-            this.snake.pointers.unshift(this.snake.head);
-        }
-        
-        //Lets paint the snake now
-        private paint()
-        {            
-            if(this.snakeIsOut() || this.checkCollision())
-            {
-                //restart game
-                this.reinit();
-                //Lets organize the code a bit now.
-                return;
-            }       
-            
-            this.changePointers();     
-                                   
-            this.paintSnake();
-            this.checkDirection();
-            console.log(this);
-            
-            setTimeout(function() {
-                debugger;
-            }, 60);
+            this.snake.pointers.unshift(this.snake.head);            
         }        
     }
 }

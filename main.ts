@@ -17,7 +17,7 @@ $(document).ready(function(){
     console.log($("body").width());    
     
     
-    setInterval(arena.init(), 3000);
+    arena.init();
         
     //Lets add the keyboard controls now
     $(document).keydown(function(e){
