@@ -1,8 +1,9 @@
 /// <reference path="../Extensions/Jquery/jquery.d.ts" />
-/*
- * Arena
- */
 
+/* ===================================================
+ * Classe criada para gerenciar, e apresentar a arena
+ * do jogo na tela
+ * ===================================================*/
 module Model {    
     export class Arena {
         public own: JQuery;
@@ -16,12 +17,11 @@ module Model {
         constructor() {  
             this.food = new Food();
             this.snake = new Snake();
-            console.log(this.snake);
             this.game_loop = undefined;
             this.own = null;          
         }
         
-        /*
+        /**
          * Inicia realmente a Arena, montando a mesma e iniciando o jogo   
          */
         public init()
@@ -37,7 +37,7 @@ module Model {
             this.game_loop = setInterval(function() {_this.paint();}, 50);            
         }
         
-        /*
+        /**
          * Reinicia a Arena, remontando a mesma e reiniciando o jogo   
          */
         public reinit()
@@ -52,8 +52,8 @@ module Model {
             this.game_loop = setInterval(function() {_this.paint();}, 50);
         }
         
-        /*
-         * Desenha os personagens a tela   
+        /**
+         * Gerencia as escritas/desenhos na tela   
          */
         private paint()
         {         
@@ -70,39 +70,54 @@ module Model {
             this.checkDirection();            
         }
         
-        //Lets first create a generic function to paint cells
+        /**
+         * Metodo criado para encontrar o ponto/celula na tela e add uma classe para desenhar o mesmo   
+         */
         private paintCell(x:number, y:number, cssClass:string = "activeSnake")
         {            
             this.own.find(".y"+y+" .x"+x).addClass(cssClass);
         }
         
-        //Lets first create a generic function to paint cells
+        /**
+         * Metodo criado para encontrar o ponto/celula na tela e remover uma classe para apagar o mesmo   
+         */
         private eraseCell(x:number, y:number, cssClass:string = "activeSnake")
         {
             this.own.find(".y"+y+" .x"+x).removeClass(cssClass);
         }
         
+        /**
+         * Metodo criado para limpar a arena   
+         */
         private cleanArena()
         {
             this.own.find("tr td").removeClass("activeSnake");
             this.own.find("tr td").removeClass("activeFood");
         }
         
+        /**
+         * Metodo criado para limpar a cobra(personagem) da arena   
+         */
         private cleanSnake(cssClass:string = "activeSnake")
         {
             if(this.own.find("tr td").hasClass(cssClass))
                 this.own.find("tr td").removeClass(cssClass);
         }
         
+        /**
+         * Metodo criado para limpar a comida da arena   
+         */
         private cleanFood(cssClass:string = "activeFood")
         {
             if(this.own.find("tr td").hasClass(cssClass))
                 this.own.find("tr td").removeClass(cssClass);
         }
         
+        /**
+         * Metodo criado para desenhar/criar a Arena e imprimila na tela   
+         */
         private paintArena() 
         {
-            //Lets paint the canvas now
             var html:string = "";
             for(var i = 0; i < this.height; i++)
             {
@@ -114,6 +129,9 @@ module Model {
             this.own.html(html);                    
         }
         
+        /**
+         * Metodo criado para desenhar a comida na arena   
+         */
         private paintFood()
         {
             this.cleanFood();
@@ -123,6 +141,9 @@ module Model {
             $(".score").text(this.snake.score.toString());
         }
         
+        /**
+         * Metodo criado para desenhar a cobra(personagem) na arena   
+         */
         private paintSnake()
         {
             var _this = this;
@@ -137,11 +158,17 @@ module Model {
             }
         }
         
+        /**
+         * Remove a ultima celula(ou ultimo ponto) da tela, no caso, remove a celula que antecede o rabo da cobra   
+         */
         private clearLastCell()
         {
             this.eraseCell(this.snake.before_tail.x, this.snake.before_tail.y);
         }
         
+        /**
+         * Verifica a direção da cobra e atribui um passo a partir da direção estipulada no momento
+         */
         private checkDirection()
         {            
             if(this.snake.direction == Direction.left) this.snake.face.x--;
@@ -150,61 +177,85 @@ module Model {
             else this.snake.face.x++;
         }
         
+        /**
+         * Verifica se a cobra esta fora da arena
+         */
         private snakeIsOut() 
         {
+            // Isto é, verifica se a cabeça da cobra(personagem) esta no ponto(celula) -1 ou no
+            // tamanho maximo da arena
             return this.snake.head.x == -1 || this.snake.head.x == this.width || 
                    this.snake.head.y == -1 || this.snake.head.y == this.height;
         }
         
+        /**
+         * Verifica se a cobra "comeu" a comida
+         */
         private snakeEat() 
         {
+            // No caso, verifica se o ponto xy da cabeça da cobra é o mesmo da comida
             return this.snake.head.x == this.food.pointer.x && 
                    this.snake.head.y == this.food.pointer.y;
         }
         
+        /**
+         * Verifica se a cobra não comeu a si mesmo no jogo
+         */
         private checkCollision()
         {
             var _this = this;
             var ocurredCollision:boolean = false;
-            //This function will check if the provided x/y coordinates exist
-            //in an array of cells or not
             this.snake.pointers.forEach(function(pointer) {
                 if(pointer.x == _this.snake.face.x && pointer.y == _this.snake.face.y)
+                {
                     ocurredCollision = true;
-            });            
+                }                    
+            });
             return ocurredCollision;
         }
         
+        /**
+         * "Move" a cobra, de maneira que não precise a sobrescrever totalmente
+         */
         private mosey()
         {
+            // Isto é, limpa o ultimo ponto da cobra(no caso o ponto que é anterior ao rabo)
             this.clearLastCell(); 
-            //Lets paint 10px wide cells
+            // E depois, imprime o novo ponto da cobra(no caso o ponto que ficava após a cabeça[a face])
             this.paintCell(this.snake.face.x, this.snake.face.y);
         }
         
+        /**
+         * Metodo criado para gerenciar as alteções de ponteiros que acontecem no jogo
+         */
         private changePointers()
-        {            
-            //Lets write the code to make the snake eat the this.food
-            //The logic is simple
-            //If the new head position matches with that of the this.food,
-            //Create a new head instead of moving the tail
+        {
+            // Como este metodo é chamado, a cada alteração de ponteiro no jogo,
+            // A primeira coisa que fazemos é verificar se o novo ponteiro não é uma comida,
+            // logo verificamos se a cobra comeu ou não
             if(this.snakeEat())
             {
-                this.snake.head = this.snake.face;
+                // Se comeu:
+                // - Adicionamos um ponto ao score
                 this.snake.score.actual++;
-                //Create new this.food
+                // - Criamos um novo ponto(celula) da comida
                 this.food.create_food(Math.round(Math.random()*(this.width)), Math.round(Math.random()*(this.height)));
+                // - E então imprimimos a mesma na tela
                 this.paintFood();
             }
             else
             {
-                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cell 
-                this.snake.head = new Pointer(this.snake.face.x,this.snake.face.y);                
+                // Se não comeu:
+                // Retiro o ultimo ponto da cobra, e a coloco no ponto antes do rabo
+                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cell                                
             }
-            
+            // E, em ambos os casos:
+            // - Defino a cabeça da cobra como os pontos que seriam a face(que esta a frente da cabeça)
+            this.snake.head = new Pointer(this.snake.face.x,this.snake.face.y);
+            // - Defino o rabo da cobra, como o ultimo ponto que esta no array
             this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];
-            
+            // - Coloco a cabeça, acima de todos os itens do array de ponteiros da cobra
             this.snake.pointers.unshift(this.snake.head);            
-        }        
+        }
     }
 }

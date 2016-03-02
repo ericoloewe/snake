@@ -1,7 +1,7 @@
-/**
- * Snake
- */
 
+/* ===================================================
+ * Classe criada para gerenciar o personagem do jogo
+ * ===================================================*/
 module Model {
     export class Snake {
         public static get INITIAL_LENGTH():number { return 5; }
@@ -25,11 +25,14 @@ module Model {
             this.direction = Direction.right;
         }
         
+        /**
+         * Inicia e cria a cobra(personagem)
+         */
         private create_snake() {
             this.pointers = new Array<Pointer>(new Pointer(0,0));
             for(var i = 0; i <= Snake.INITIAL_LENGTH-1 ; i++)
             {
-                //This will create a horizontal snake starting from the top left
+                // De maneira que a direção dele esteja apontando para a direita
                 this.pointers.push(new Pointer(i,0));
             }
             // É retirado o primeiro elemento do array porque ele estava pegando um valor randomico

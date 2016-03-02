@@ -14,7 +14,6 @@ $(document).ready(function(){
     arena.own = $("#arena");
     arena.width = 50;
     arena.height = 40;
-    console.log($("body").width());    
     
     
     arena.init();
