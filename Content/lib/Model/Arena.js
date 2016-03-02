@@ -21,7 +21,7 @@ var Model;
             this.paintArena();
             this.paintSnake();
             this.paintFood();
-            this.game_loop = setInterval(function () { _this.paint(); }, 70);
+            this.game_loop = setInterval(function () { _this.paint(); }, 50);
         };
         /**
          * Reinicia a Arena, remontando a mesma e reiniciando o jogo
@@ -78,6 +78,14 @@ var Model;
                 this.own.find("tr td").removeClass(cssClass);
         };
         /**
+         * Metodo criado para limpar a cobra(personagem) da arena
+         */
+        Arena.prototype.cleanSnakeHead = function (cssClass) {
+            if (cssClass === void 0) { cssClass = "activeSnakeHead"; }
+            if (this.own.find("tr td").hasClass(cssClass))
+                this.own.find("tr td").removeClass(cssClass);
+        };
+        /**
          * Metodo criado para limpar a comida da arena
          */
         Arena.prototype.cleanFood = function (cssClass) {
@@ -122,6 +130,14 @@ var Model;
                     _this.paintCell(pointer.x, pointer.y);
                 });
             }
+            this.paintSnakeHead();
+        };
+        /**
+         * Metodo criado para desenhar a cobra(personagem) na arena
+         */
+        Arena.prototype.paintSnakeHead = function () {
+            this.cleanSnakeHead();
+            this.paintCell(this.snake.head.x, this.snake.head.y, "activeSnakeHead");
         };
         /**
          * Remove a ultima celula(ou ultimo ponto) da tela, no caso, remove a celula que antecede o rabo da cobra

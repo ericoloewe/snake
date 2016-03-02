@@ -34,7 +34,7 @@ module Model {
             this.paintSnake();
             this.paintFood();
             
-            this.game_loop = setInterval(function() {_this.paint();}, 70);            
+            this.game_loop = setInterval(function() {_this.paint();}, 50);            
         }
         
         /**
@@ -105,6 +105,15 @@ module Model {
         }
         
         /**
+         * Metodo criado para limpar a cobra(personagem) da arena   
+         */
+        private cleanSnakeHead(cssClass:string = "activeSnakeHead")
+        {
+            if(this.own.find("tr td").hasClass(cssClass))
+                this.own.find("tr td").removeClass(cssClass);
+        }
+        
+        /**
          * Metodo criado para limpar a comida da arena   
          */
         private cleanFood(cssClass:string = "activeFood")
@@ -156,6 +165,16 @@ module Model {
                     _this.paintCell(pointer.x, pointer.y);
                 });
             }
+            this.paintSnakeHead();
+        }
+        
+        /**
+         * Metodo criado para desenhar a cobra(personagem) na arena   
+         */
+        private paintSnakeHead()
+        {
+            this.cleanSnakeHead();
+            this.paintCell(this.snake.head.x, this.snake.head.y, "activeSnakeHead");
         }
         
         /**

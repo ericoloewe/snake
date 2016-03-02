@@ -7,11 +7,16 @@
 #arena {
     margin: 0 auto;
     display: table;
-    background-color: #BDDB93;
+    background-color: #BDDB93;   
+    border: 5px solid #002100;
 }
 
 #arena tr td.activeSnake {
     background-color: #002100;   
+}
+
+#arena tr td.activeSnakeHead {
+    background-color: #ff0000;   
 }
 
 #arena tr td.activeFood {
