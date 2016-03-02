@@ -34,7 +34,7 @@ module Model {
             this.paintSnake();
             this.paintFood();
             
-            this.game_loop = setInterval(function() {_this.paint();}, 50);            
+            this.game_loop = setInterval(function() {_this.paint();}, 70);            
         }
         
         /**
@@ -49,7 +49,7 @@ module Model {
             this.paintFood();
             if(typeof this.game_loop != undefined) 
                 clearInterval(this.game_loop);
-            this.game_loop = setInterval(function() {_this.paint();}, 50);
+            this.game_loop = setInterval(function() {_this.paint();}, 50); 
         }
         
         /**

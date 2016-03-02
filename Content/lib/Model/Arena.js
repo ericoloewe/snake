@@ -21,7 +21,7 @@ var Model;
             this.paintArena();
             this.paintSnake();
             this.paintFood();
-            this.game_loop = setInterval(function () { _this.paint(); }, 50);
+            this.game_loop = setInterval(function () { _this.paint(); }, 70);
         };
         /**
          * Reinicia a Arena, remontando a mesma e reiniciando o jogo
