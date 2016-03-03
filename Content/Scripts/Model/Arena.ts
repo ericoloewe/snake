@@ -10,6 +10,7 @@ module Model {
         public width: number;
         public height: number;
         public cellWidth: number;
+        public highScore: Score;
         public snake: Snake;
         public food: Food;
         public game_loop: any;
@@ -17,6 +18,9 @@ module Model {
         constructor() {  
             this.food = new Food();
             this.snake = new Snake();
+            this.highScore = new Score();
+            this.highScore.loadHighScore();
+            this.paintHighScore();
             this.game_loop = undefined;
             this.own = null;          
         }
@@ -59,7 +63,6 @@ module Model {
         {         
             if(this.snakeIsOut() || this.checkCollision())
             {
-                //Lets organize the code a bit now.
                 return;
             }
             
@@ -168,6 +171,11 @@ module Model {
             this.paintSnakeHead();
         }
         
+        private paintHighScore()
+        {
+            $(".bestScore").text(this.highScore.highScoreToString());
+        }
+        
         /**
          * Metodo criado para desenhar a cobra(personagem) na arena   
          */
@@ -218,6 +226,17 @@ module Model {
         }
         
         /**
+         * Verifica se o score atual é melhor que o HighScore
+         */
+        private verifyAndChangeHighScore() 
+        {
+            if(this.highScore.isBestScore(this.snake.score.actual))
+            {
+                this.paintHighScore();
+            }
+        }
+        
+        /**
          * Verifica se a cobra não comeu a si mesmo no jogo
          */
         private checkCollision()
@@ -261,6 +280,8 @@ module Model {
                 this.food.create_food(Math.round(Math.random()*(this.width)), Math.round(Math.random()*(this.height)));
                 // - E então imprimimos a mesma na tela
                 this.paintFood();
+                // Verifica se o score atual é maior que o highScore
+                this.verifyAndChangeHighScore();                
             }
             else
             {

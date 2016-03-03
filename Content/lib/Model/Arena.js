@@ -9,6 +9,9 @@ var Model;
         function Arena() {
             this.food = new Model.Food();
             this.snake = new Model.Snake();
+            this.highScore = new Model.Score();
+            this.highScore.loadHighScore();
+            this.paintHighScore();
             this.game_loop = undefined;
             this.own = null;
         }
@@ -41,7 +44,6 @@ var Model;
          */
         Arena.prototype.paint = function () {
             if (this.snakeIsOut() || this.checkCollision()) {
-                //Lets organize the code a bit now.
                 return;
             }
             this.changePointers();
@@ -132,6 +134,9 @@ var Model;
             }
             this.paintSnakeHead();
         };
+        Arena.prototype.paintHighScore = function () {
+            $(".bestScore").text(this.highScore.highScoreToString());
+        };
         /**
          * Metodo criado para desenhar a cobra(personagem) na arena
          */
@@ -176,6 +181,14 @@ var Model;
                 this.snake.head.y == this.food.pointer.y;
         };
         /**
+         * Verifica se o score atual é melhor que o HighScore
+         */
+        Arena.prototype.verifyAndChangeHighScore = function () {
+            if (this.highScore.isBestScore(this.snake.score.actual)) {
+                this.paintHighScore();
+            }
+        };
+        /**
          * Verifica se a cobra não comeu a si mesmo no jogo
          */
         Arena.prototype.checkCollision = function () {
@@ -212,6 +225,8 @@ var Model;
                 this.food.create_food(Math.round(Math.random() * (this.width)), Math.round(Math.random() * (this.height)));
                 // - E então imprimimos a mesma na tela
                 this.paintFood();
+                // Verifica se o score atual é maior que o highScore
+                this.verifyAndChangeHighScore();
             }
             else {
                 // Se não comeu:
