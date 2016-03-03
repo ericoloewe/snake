@@ -12,7 +12,7 @@ $(document).ready(function(){
     arena.cellWidth = 10;
     
     // Define quem é a Arena no html
-    arena.own = $("#arena");
+    arena.own = $(".arena");
     // Define a largura que a arena vai ter
     arena.width = 50;
     // Define a altura que a arena vai ter

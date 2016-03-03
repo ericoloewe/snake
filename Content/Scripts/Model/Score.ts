@@ -14,7 +14,7 @@ module Model {
          * Inicia realmente a Arena, montando a mesma e iniciando o jogo   
          */
         public toString() {
-            return "Score: " + this.actual;
+            return "SCORE: " + this.actual;
         }
     }
 }

@@ -9,7 +9,7 @@ $(document).ready(function () {
     // Grava o tamanho da celula(ponteiro) para controle
     arena.cellWidth = 10;
     // Define quem é a Arena no html
-    arena.own = $("#arena");
+    arena.own = $(".arena");
     // Define a largura que a arena vai ter
     arena.width = 50;
     // Define a altura que a arena vai ter

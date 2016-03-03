@@ -11,7 +11,7 @@ var Model;
          * Inicia realmente a Arena, montando a mesma e iniciando o jogo
          */
         Score.prototype.toString = function () {
-            return "Score: " + this.actual;
+            return "SCORE: " + this.actual;
         };
         return Score;
     })();
