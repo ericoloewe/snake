@@ -12,6 +12,7 @@ var Model;
             this.highScore = new Model.Score();
             this.highScore.loadHighScore();
             this.paintHighScore();
+            this.speed = 50;
             this.game_loop = undefined;
             this.own = null;
         }
@@ -34,7 +35,7 @@ var Model;
          */
         Arena.prototype.start = function () {
             var _this = this;
-            this.game_loop = setInterval(function () { _this.paint(); }, 50);
+            this.game_loop = setInterval(function () { _this.paint(); }, this.speed);
         };
         /**
          * Reinicia a Arena, remontando a mesma e reiniciando o jogo
@@ -57,7 +58,7 @@ var Model;
             this.paintFood();
             if (typeof this.game_loop != undefined)
                 clearInterval(this.game_loop);
-            this.game_loop = setInterval(function () { _this.paint(); }, 50);
+            this.game_loop = setInterval(function () { _this.paint(); }, this.speed);
         };
         /**
          * Gerencia as escritas/desenhos na tela

@@ -10,6 +10,7 @@ module Model {
         public width: number;
         public height: number;
         public cellWidth: number;
+        public speed: number;
         public highScore: Score;
         public snake: Snake;
         public food: Food;
@@ -21,6 +22,7 @@ module Model {
             this.highScore = new Score();
             this.highScore.loadHighScore();
             this.paintHighScore();
+            this.speed = 50;
             this.game_loop = undefined;
             this.own = null;          
         }
@@ -52,7 +54,7 @@ module Model {
         {
             var _this = this;
             
-            this.game_loop = setInterval(function() {_this.paint();}, 50);            
+            this.game_loop = setInterval(function() {_this.paint();}, this.speed);            
         }
         
         /**
@@ -81,7 +83,7 @@ module Model {
             this.paintFood();
             if(typeof this.game_loop != undefined) 
                 clearInterval(this.game_loop);
-            this.game_loop = setInterval(function() {_this.paint();}, 50); 
+            this.game_loop = setInterval(function() {_this.paint();}, this.speed); 
         }
         
         /**
