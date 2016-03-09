@@ -5,47 +5,74 @@ body {
     font-family: "Comic Sans MS", cursive, sans-serif;
     background-color: #CCC;
 }
-
-.area {
-    position: relative;
-    background-color: #BDDB93;   
-    border: 5px solid #002100;
     
-    .score_table p {        
-        font-weight: bold;
-        margin: 5px;
-    }
+    // Classe feita para definir atributos a arena
+    .area {
+        position: relative;
+        background-color: #BDDB93;   
+        border: 5px solid #002100;
+        
+        .score_table p {        
+            font-weight: bold;
+            margin: 5px;
+        }
 
-    .arena {
-        margin: 0 auto;
-        display: table;   
-        border-top: 5px solid #002100;
-    
-        tr td {
-            background-color: #BDDB93;        
+        .arena {
+            margin: 0 auto;
+            display: table;   
+            border-top: 5px solid #002100;
+        
+            tr td {
+                background-color: #BDDB93;        
 
-            &.activeSnake {
-                background-color: #002100;   
+                &.activeSnake {
+                    background-color: #002100;   
+                }
+
+                &.activeSnakeHead {
+                    background-color: #ff0000;   
+                }
+
+                &.activeFood {
+                    background-color: #8D8B72;   
+                } 
             }
-
-            &.activeSnakeHead {
-                background-color: #ff0000;   
-            }
-
-            &.activeFood {
-                background-color: #8D8B72;   
-            } 
         }
     }
     
+    // Classe feita para centralizar e definir atributos ao menu
     .menu {
         position: relative;
-        margin: 0 auto;
+        display: table;
+        left: 0;
+        right: 0;
+        top: -50%;
         bottom: 0;
-        top: 0;
-        button {            
+        border: 3px solid #002100;
+        border-bottom: 1px solid #002100;
+        background-color: #BDDB93;
+        z-index: 100;
+            
+        .btn {
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            font-weight: bold;                            
             height: 30px;
-            width: 50px;            
+            width: 100px;
+            background-color: #BDDB93;
+            text-align: center;
+            border: none;
+            width: 100%;
+            padding: 0 15px;
+            border-bottom: 2px solid #002100;            
+        }        
+        p {
+            &.btn {
+                padding: 0;
+            }            
         }
     }
+    
+// Esconde os elementos
+.hidden {
+    display: none !important;
 }

@@ -16,7 +16,7 @@ var Model;
             this.own = null;
         }
         /**
-         * Inicia realmente a Arena, montando a mesma e iniciando o jogo
+         * Inicia realmente a Arena, montando a mesma
          */
         Arena.prototype.init = function () {
             var _this = this;
@@ -24,12 +24,32 @@ var Model;
             this.paintArena();
             this.paintSnake();
             this.paintFood();
+            $(".init").click(function () {
+                $(".menu").addClass("hidden");
+                arena.start();
+            });
+        };
+        /**
+         * Inicia o jogo
+         */
+        Arena.prototype.start = function () {
+            var _this = this;
             this.game_loop = setInterval(function () { _this.paint(); }, 50);
         };
         /**
          * Reinicia a Arena, remontando a mesma e reiniciando o jogo
          */
-        Arena.prototype.reinit = function () {
+        Arena.prototype.processToRestart = function () {
+            $(".menu.menu-game-over").removeClass("hidden");
+            $(".restart").click(function () {
+                $(".menu.menu-game-over").addClass("hidden");
+                arena.restart();
+            });
+        };
+        /**
+         * Reinicia a Arena, remontando a mesma e reiniciando o jogo
+         */
+        Arena.prototype.restart = function () {
             var _this = this;
             this.snake = new Model.Snake();
             this.cleanArena();
@@ -44,6 +64,7 @@ var Model;
          */
         Arena.prototype.paint = function () {
             if (this.snakeIsOut() || this.checkCollision()) {
+                this.processToRestart();
                 return;
             }
             this.changePointers();

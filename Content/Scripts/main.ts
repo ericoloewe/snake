@@ -20,7 +20,7 @@ $(document).ready(function(){
     
     // E então finalmente inicia a Arena, 
     // fazendo assim com que o jogo inicie
-    arena.init();
+    arena.init();    
         
     /**
      * Gerencia as teclas tecladas para o jogo
@@ -33,6 +33,5 @@ $(document).ready(function(){
         else if(key == 39 && arena.snake.direction != Model.Direction.left) arena.snake.direction = Model.Direction.right;
         else if(key == 40 && arena.snake.direction != Model.Direction.up) arena.snake.direction = Model.Direction.down;
         // Agora a cobra(personagem) esta controlavel
-    })
- 
+    }); 
 })

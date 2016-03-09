@@ -26,7 +26,7 @@ module Model {
         }
         
         /**
-         * Inicia realmente a Arena, montando a mesma e iniciando o jogo   
+         * Inicia realmente a Arena, montando a mesma   
          */
         public init()
         {
@@ -36,7 +36,21 @@ module Model {
             
             this.paintArena();
             this.paintSnake();
-            this.paintFood();
+            this.paintFood();  
+            
+            $(".init").click(function() {
+                $(".menu").addClass("hidden");
+                
+                arena.start();
+            });        
+        }
+        
+        /**
+         * Inicia o jogo   
+         */
+        public start()
+        {
+            var _this = this;
             
             this.game_loop = setInterval(function() {_this.paint();}, 50);            
         }
@@ -44,7 +58,21 @@ module Model {
         /**
          * Reinicia a Arena, remontando a mesma e reiniciando o jogo   
          */
-        public reinit()
+        public processToRestart()
+        {
+            $(".menu.menu-game-over").removeClass("hidden");
+            
+            $(".restart").click(function() {
+                $(".menu.menu-game-over").addClass("hidden");
+                
+                arena.restart();
+            });  
+        }
+        
+        /**
+         * Reinicia a Arena, remontando a mesma e reiniciando o jogo   
+         */
+        public restart()
         {
             var _this = this;
             this.snake = new Snake();
@@ -63,6 +91,7 @@ module Model {
         {         
             if(this.snakeIsOut() || this.checkCollision())
             {
+                this.processToRestart();
                 return;
             }
             
