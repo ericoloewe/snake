@@ -11,6 +11,7 @@ module Model {
         public height: number;
         public cellWidth: number;
         public speed: number;
+        public static get MIN_SPEED():number { return 100; }
         public highScore: Score;
         public snake: Snake;
         public food: Food;
@@ -81,6 +82,7 @@ module Model {
             this.cleanArena();
             this.paintSnake();
             this.paintFood();
+            this.speed = Arena.MIN_SPEED;
             if(typeof this.game_loop != undefined) 
                 clearInterval(this.game_loop);
             this.game_loop = setInterval(function() {_this.paint();}, this.speed); 
@@ -313,6 +315,8 @@ module Model {
                 this.paintFood();
                 // Verifica se o score atual é maior que o highScore
                 this.verifyAndChangeHighScore();                
+                // Aumenta a velocidade da cobra
+                this.speedUpSnake();    
             }
             else
             {
@@ -327,6 +331,12 @@ module Model {
             this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];
             // - Coloco a cabeça, acima de todos os itens do array de ponteiros da cobra
             this.snake.pointers.unshift(this.snake.head);            
+        }
+        
+        private speedUpSnake()
+        {
+            this.speed = ((100*this.speed)/Arena.MIN_SPEED)-5;      
+            console.log(this.speed);      
         }
     }
 }
