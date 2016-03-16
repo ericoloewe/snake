@@ -41,37 +41,41 @@ body {
     }
     
     // Classe feita para centralizar e definir atributos ao menu
-    .menu {
-        position: relative;
-        display: table;
-        left: 0;
-        right: 0;
-        top: -50%;
-        bottom: 0;
-        border: 3px solid #002100;
-        border-bottom: 1px solid #002100;
-        background-color: #BDDB93;
-        z-index: 100;
-            
-        .btn {
-            font-family: "Comic Sans MS", cursive, sans-serif;
-            font-weight: bold;                            
-            height: 30px;
-            width: 100px;
+    .menu-parent {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        
+        .menu {
+            position: relative;
+            border: 3px solid #002100;
+            border-bottom: 1px solid #002100;
             background-color: #BDDB93;
-            text-align: center;
-            border: none;
-            width: 100%;
-            padding: 0 15px;
-            border-bottom: 2px solid #002100;            
-        }        
-        p {
-            &.btn {
-                padding: 0;
-                margin: 0;
-            }            
+            z-index: 100;
+            top: 20%;
+                
+            .btn {
+                font-family: "Comic Sans MS", cursive, sans-serif;
+                font-weight: bold;                            
+                height: 30px;
+                width: 100px;
+                background-color: #BDDB93;
+                text-align: center;
+                border: none;
+                width: 100%;
+                padding: 0 15px;
+                border-bottom: 2px solid #002100;            
+            }        
+            p {
+                &.btn {
+                    padding: 0;
+                    margin: 0;
+                }            
+            }
         }
     }
+    
     
 // Esconde os elementos
 .hidden {
