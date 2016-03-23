@@ -8,10 +8,12 @@ module Model {
     export class Pointer {
         public x: number;
         public y: number;
+        public whatIsIt: WhatIsThisTypes;
         
-        constructor(x:number = 0, y:number = 0) {
+        constructor(x:number = 0, y:number = 0, whatIsIt?:WhatIsThisTypes) {
             this.x = x;
             this.y = y;
+            this.whatIsIt = whatIsIt || WhatIsThisTypes.Null;
         }
     }
 }

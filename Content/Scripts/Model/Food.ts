@@ -21,6 +21,7 @@ module Model {
             this.pointer = {
                 x: foodPointerX, 
                 y: foodPointerY, 
+                whatIsIt: WhatIsThisTypes.Food
             };
         }
     }

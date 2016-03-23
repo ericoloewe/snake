@@ -10,6 +10,7 @@ gulp.task("compiler", function() {
     var tsconfig = tsc.createProject("tsconfig.json");
     return gulp.src([
                     "./Content/Scripts/Model/Direction.ts",
+                    "./Content/Scripts/Model/WhatIsThisTypes.ts",
                     "./Content/Scripts/Model/Pointer.ts",
                     "./Content/Scripts/Model/Score.ts",
                     "./Content/Scripts/Model/Food.ts",

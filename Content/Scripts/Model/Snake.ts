@@ -29,11 +29,11 @@ module Model {
          * Inicia e cria a cobra(personagem)
          */
         private create_snake() {
-            this.pointers = new Array<Pointer>(new Pointer(0,0));
+            this.pointers = new Array<Pointer>(new Pointer(0, 0, WhatIsThisTypes.Snake));
             for(var i = 0; i <= Snake.INITIAL_LENGTH-1 ; i++)
             {
                 // De maneira que a direção dele esteja apontando para a direita
-                this.pointers.push(new Pointer(i,0));
+                this.pointers.push(new Pointer(i, 0, WhatIsThisTypes.Snake));
             }
             // É retirado o primeiro elemento do array porque ele estava pegando um valor randomico
             this.pointers.shift();            

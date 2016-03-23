@@ -6,11 +6,12 @@
 var Model;
 (function (Model) {
     var Pointer = (function () {
-        function Pointer(x, y) {
+        function Pointer(x, y, whatIsIt) {
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             this.x = x;
             this.y = y;
+            this.whatIsIt = whatIsIt || Model.WhatIsThisTypes.Null;
         }
         return Pointer;
     })();

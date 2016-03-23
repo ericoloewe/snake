@@ -15,6 +15,9 @@ var Model;
             this.speed = 50;
             this.game_loop = undefined;
             this.own = null;
+            this.height = 40;
+            this.width = 50;
+            this.initMatriz();
         }
         Object.defineProperty(Arena, "MIN_SPEED", {
             get: function () { return 100; },
@@ -27,13 +30,35 @@ var Model;
         Arena.prototype.init = function () {
             var _this = this;
             this.food.create_food(Math.round(Math.random() * (this.width)), Math.round(Math.random() * (this.height)));
+            this.putSnakeOnMatriz();
             this.paintArena();
             this.paintSnake();
             this.paintFood();
             $(".init").click(function () {
                 $(".menu").addClass("hidden");
-                arena.start();
+                _this.start();
             });
+        };
+        /**
+         * Coloca os ponteiros da cobra dentro da matriz da arena
+         */
+        Arena.prototype.putSnakeOnMatriz = function () {
+            var _this = this;
+            this.snake.pointers.forEach(function (pointer) {
+                _this.matriz[pointer.y][pointer.x].whatIsIt = pointer.whatIsIt;
+            });
+        };
+        /**
+         * Cria a matriz da arena
+         */
+        Arena.prototype.initMatriz = function () {
+            this.matriz = [];
+            for (var i = 0; i < this.height; i++) {
+                this.matriz[i] = [];
+                for (var j = 0; j < this.width; j++) {
+                    this.matriz[i][j] = new Model.Pointer(j, i);
+                }
+            }
         };
         /**
          * Inicia o jogo
@@ -242,6 +267,7 @@ var Model;
          * Metodo criado para gerenciar as alteções de ponteiros que acontecem no jogo
          */
         Arena.prototype.changePointers = function () {
+            var pointX, pointY;
             // Como este metodo é chamado, a cada alteração de ponteiro no jogo,
             // A primeira coisa que fazemos é verificar se o novo ponteiro não é uma comida,
             // logo verificamos se a cobra comeu ou não
@@ -250,7 +276,11 @@ var Model;
                 // - Adicionamos um ponto ao score
                 this.snake.score.actual++;
                 // - Criamos um novo ponto(celula) da comida
-                this.food.create_food(Math.round(Math.random() * (this.width)), Math.round(Math.random() * (this.height)));
+                this.matriz[this.food.pointer.y][this.food.pointer.x].whatIsIt = null;
+                pointX = Math.round(Math.random() * (this.width));
+                pointY = Math.round(Math.random() * (this.height));
+                this.food.create_food(pointX, pointY);
+                this.matriz[pointY][pointX].whatIsIt = Model.WhatIsThisTypes.Food;
                 // - E então imprimimos a mesma na tela
                 this.paintFood();
                 // Verifica se o score atual é maior que o highScore
@@ -261,11 +291,12 @@ var Model;
             else {
                 // Se não comeu:
                 // Retiro o ultimo ponto da cobra, e a coloco no ponto antes do rabo
-                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cell                                
+                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cellWidth
+                this.matriz[this.snake.before_tail.y][this.snake.before_tail.x].whatIsIt = Model.WhatIsThisTypes.Null;
             }
             // E, em ambos os casos:
             // - Defino a cabeça da cobra como os pontos que seriam a face(que esta a frente da cabeça)
-            this.snake.head = new Model.Pointer(this.snake.face.x, this.snake.face.y);
+            this.snake.head = new Model.Pointer(this.snake.face.x, this.snake.face.y, Model.WhatIsThisTypes.Snake);
             // - Defino o rabo da cobra, como o ultimo ponto que esta no array
             this.snake.tail = this.snake.pointers[this.snake.pointers.length - 1];
             // - Coloco a cabeça, acima de todos os itens do array de ponteiros da cobra

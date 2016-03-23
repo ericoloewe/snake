@@ -7,6 +7,7 @@
 module Model {    
     export class Arena {
         public own: JQuery;
+        public matriz: Pointer[][];
         public width: number;
         public height: number;
         public cellWidth: number;
@@ -25,7 +26,10 @@ module Model {
             this.paintHighScore();
             this.speed = 50;
             this.game_loop = undefined;
-            this.own = null;          
+            this.own = null;  
+            this.height = 40;
+            this.width = 50;
+            this.initMatriz();
         }
         
         /**
@@ -37,15 +41,44 @@ module Model {
             
             this.food.create_food(Math.round(Math.random()*(this.width)), Math.round(Math.random()*(this.height)));
             
+            this.putSnakeOnMatriz();
             this.paintArena();
             this.paintSnake();
-            this.paintFood();  
+            this.paintFood(); 
             
             $(".init").click(function() {
                 $(".menu").addClass("hidden");
                 
-                arena.start();
+                _this.start();
             });        
+        }
+        
+        /**
+         * Coloca os ponteiros da cobra dentro da matriz da arena   
+         */
+        public putSnakeOnMatriz()
+        {
+            var _this = this;
+            
+            this.snake.pointers.forEach(function(pointer) {
+                _this.matriz[pointer.y][pointer.x].whatIsIt = pointer.whatIsIt;
+            });
+        }
+        
+        /**
+         * Cria a matriz da arena   
+         */
+        public initMatriz()
+        {            
+            this.matriz = [];
+            for(var i:number = 0; i < this.height; i++)
+            {
+                this.matriz[i] = [];
+                for(var j:number = 0; j < this.width; j++)
+                {
+                    this.matriz[i][j] = new Pointer(j,i);
+                }
+            }  
         }
         
         /**
@@ -301,6 +334,7 @@ module Model {
          */
         private changePointers()
         {
+            var pointX:number, pointY:number;
             // Como este metodo é chamado, a cada alteração de ponteiro no jogo,
             // A primeira coisa que fazemos é verificar se o novo ponteiro não é uma comida,
             // logo verificamos se a cobra comeu ou não
@@ -310,7 +344,16 @@ module Model {
                 // - Adicionamos um ponto ao score
                 this.snake.score.actual++;
                 // - Criamos um novo ponto(celula) da comida
-                this.food.create_food(Math.round(Math.random()*(this.width)), Math.round(Math.random()*(this.height)));
+                this.matriz[this.food.pointer.y][this.food.pointer.x].whatIsIt = null;
+                
+                pointX = Math.round(Math.random()*(this.width));
+                pointY = Math.round(Math.random()*(this.height));
+                
+                this.food.create_food(pointX, pointY);
+                
+                this.matriz[pointY][pointX].whatIsIt = WhatIsThisTypes.Food;
+                
+                
                 // - E então imprimimos a mesma na tela
                 this.paintFood();
                 // Verifica se o score atual é maior que o highScore
@@ -322,11 +365,12 @@ module Model {
             {
                 // Se não comeu:
                 // Retiro o ultimo ponto da cobra, e a coloco no ponto antes do rabo
-                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cell                                
+                this.snake.before_tail = this.snake.pointers.pop(); //pops out the last cellWidth
+                this.matriz[this.snake.before_tail.y][this.snake.before_tail.x].whatIsIt = WhatIsThisTypes.Null;
             }
             // E, em ambos os casos:
             // - Defino a cabeça da cobra como os pontos que seriam a face(que esta a frente da cabeça)
-            this.snake.head = new Pointer(this.snake.face.x,this.snake.face.y);
+            this.snake.head = new Pointer(this.snake.face.x,this.snake.face.y, WhatIsThisTypes.Snake);
             // - Defino o rabo da cobra, como o ultimo ponto que esta no array
             this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];
             // - Coloco a cabeça, acima de todos os itens do array de ponteiros da cobra
