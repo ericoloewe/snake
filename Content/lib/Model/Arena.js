@@ -65,7 +65,7 @@ var Model;
          */
         Arena.prototype.start = function () {
             var _this = this;
-            this.game_loop = setInterval(function () { _this.paint(); }, this.speed);
+            this.game_loop = setInterval(function () { _this.play(); }, this.speed);
         };
         /**
          * Reinicia a Arena, remontando a mesma e reiniciando o jogo
@@ -89,12 +89,12 @@ var Model;
             this.speed = Arena.MIN_SPEED;
             if (typeof this.game_loop != undefined)
                 clearInterval(this.game_loop);
-            this.game_loop = setInterval(function () { _this.paint(); }, this.speed);
+            this.game_loop = setInterval(function () { _this.play(); }, this.speed);
         };
         /**
          * Gerencia as escritas/desenhos na tela
          */
-        Arena.prototype.paint = function () {
+        Arena.prototype.play = function () {
             if (this.snakeIsOut() || this.checkCollision()) {
                 this.processToRestart();
                 return;
@@ -244,7 +244,7 @@ var Model;
         /**
          * Verifica se a cobra não comeu a si mesmo no jogo
          */
-        Arena.prototype.checkCollision = function () {
+        Arena.prototype.checkCollision_old = function () {
             var _this = this;
             var ocurredCollision = false;
             this.snake.pointers.forEach(function (pointer) {
@@ -253,6 +253,12 @@ var Model;
                 }
             });
             return ocurredCollision;
+        };
+        /**
+         * Verifica se a cobra não comeu a si mesmo no jogo
+         */
+        Arena.prototype.checkCollision = function () {
+            return this.matriz[this.snake.face.y][this.snake.face.x].whatIsIt == Model.WhatIsThisTypes.Snake;
         };
         /**
          * "Move" a cobra, de maneira que não precise a sobrescrever totalmente
@@ -301,6 +307,7 @@ var Model;
             this.snake.tail = this.snake.pointers[this.snake.pointers.length - 1];
             // - Coloco a cabeça, acima de todos os itens do array de ponteiros da cobra
             this.snake.pointers.unshift(this.snake.head);
+            this.matriz[this.snake.head.y][this.snake.head.x].whatIsIt = Model.WhatIsThisTypes.Snake;
         };
         Arena.prototype.speedUpSnake = function () {
             this.speed = ((100 * this.speed) / Arena.MIN_SPEED) - 5;

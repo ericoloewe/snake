@@ -88,7 +88,7 @@ module Model {
         {
             var _this = this;
             
-            this.game_loop = setInterval(function() {_this.paint();}, this.speed);            
+            this.game_loop = setInterval(function() {_this.play();}, this.speed);            
         }
         
         /**
@@ -118,13 +118,13 @@ module Model {
             this.speed = Arena.MIN_SPEED;
             if(typeof this.game_loop != undefined) 
                 clearInterval(this.game_loop);
-            this.game_loop = setInterval(function() {_this.paint();}, this.speed); 
+            this.game_loop = setInterval(function() {_this.play();}, this.speed); 
         }
         
         /**
          * Gerencia as escritas/desenhos na tela   
          */
-        private paint()
+        private play()
         {         
             if(this.snakeIsOut() || this.checkCollision())
             {
@@ -305,7 +305,7 @@ module Model {
         /**
          * Verifica se a cobra não comeu a si mesmo no jogo
          */
-        private checkCollision()
+        private checkCollision_old()
         {
             var _this = this;
             var ocurredCollision:boolean = false;
@@ -316,6 +316,14 @@ module Model {
                 }                    
             });
             return ocurredCollision;
+        }
+        
+        /**
+         * Verifica se a cobra não comeu a si mesmo no jogo
+         */
+        private checkCollision()
+        {
+            return this.matriz[this.snake.face.y][this.snake.face.x].whatIsIt == WhatIsThisTypes.Snake;
         }
         
         /**
@@ -374,7 +382,8 @@ module Model {
             // - Defino o rabo da cobra, como o ultimo ponto que esta no array
             this.snake.tail = this.snake.pointers[this.snake.pointers.length-1];
             // - Coloco a cabeça, acima de todos os itens do array de ponteiros da cobra
-            this.snake.pointers.unshift(this.snake.head);            
+            this.snake.pointers.unshift(this.snake.head);
+            this.matriz[this.snake.head.y][this.snake.head.x].whatIsIt = WhatIsThisTypes.Snake;
         }
         
         private speedUpSnake()
