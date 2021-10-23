@@ -11,10 +11,8 @@ var Model;
             this.snake = new Model.Snake();
             this.highScore = new Model.Score();
             this.highScore.loadHighScore();
-            this.paintHighScore();
             this.speed = 50;
             this.game_loop = undefined;
-            this.own = null;
             this.height = 40;
             this.width = 50;
             this.initMatriz();
@@ -28,16 +26,9 @@ var Model;
          * Inicia realmente a Arena, montando a mesma
          */
         Arena.prototype.init = function () {
-            var _this = this;
             this.food.create_food(Math.round(Math.random() * (this.width)), Math.round(Math.random() * (this.height)));
             this.putSnakeOnMatriz();
-            this.paintArena();
-            this.paintSnake();
-            this.paintFood();
-            $(".init").click(function () {
-                $(".menu").addClass("hidden");
-                _this.start();
-            });
+            this.start();
         };
         /**
          * Coloca os ponteiros da cobra dentro da matriz da arena
@@ -83,9 +74,6 @@ var Model;
         Arena.prototype.restart = function () {
             var _this = this;
             this.snake = new Model.Snake();
-            this.cleanArena();
-            this.paintSnake();
-            this.paintFood();
             this.speed = Arena.MIN_SPEED;
             if (typeof this.game_loop != undefined)
                 clearInterval(this.game_loop);
@@ -100,108 +88,7 @@ var Model;
                 return;
             }
             this.changePointers();
-            this.paintSnake();
             this.checkDirection();
-        };
-        /**
-         * Metodo criado para encontrar o ponto/celula na tela e add uma classe para desenhar o mesmo
-         */
-        Arena.prototype.paintCell = function (x, y, cssClass) {
-            if (cssClass === void 0) { cssClass = "activeSnake"; }
-            this.own.find(".y" + y + " .x" + x).addClass(cssClass);
-        };
-        /**
-         * Metodo criado para encontrar o ponto/celula na tela e remover uma classe para apagar o mesmo
-         */
-        Arena.prototype.eraseCell = function (x, y, cssClass) {
-            if (cssClass === void 0) { cssClass = "activeSnake"; }
-            this.own.find(".y" + y + " .x" + x).removeClass(cssClass);
-        };
-        /**
-         * Metodo criado para limpar a arena
-         */
-        Arena.prototype.cleanArena = function () {
-            this.own.find("tr td").removeClass("activeSnake");
-            this.own.find("tr td").removeClass("activeFood");
-        };
-        /**
-         * Metodo criado para limpar a cobra(personagem) da arena
-         */
-        Arena.prototype.cleanSnake = function (cssClass) {
-            if (cssClass === void 0) { cssClass = "activeSnake"; }
-            if (this.own.find("tr td").hasClass(cssClass))
-                this.own.find("tr td").removeClass(cssClass);
-        };
-        /**
-         * Metodo criado para limpar a cobra(personagem) da arena
-         */
-        Arena.prototype.cleanSnakeHead = function (cssClass) {
-            if (cssClass === void 0) { cssClass = "activeSnakeHead"; }
-            if (this.own.find("tr td").hasClass(cssClass))
-                this.own.find("tr td").removeClass(cssClass);
-        };
-        /**
-         * Metodo criado para limpar a comida da arena
-         */
-        Arena.prototype.cleanFood = function (cssClass) {
-            if (cssClass === void 0) { cssClass = "activeFood"; }
-            if (this.own.find("tr td").hasClass(cssClass))
-                this.own.find("tr td").removeClass(cssClass);
-        };
-        /**
-         * Metodo criado para desenhar/criar a Arena e imprimila na tela
-         */
-        Arena.prototype.paintArena = function () {
-            var html = "";
-            for (var i = 0; i < this.height; i++) {
-                html += "<tr height='10' class='y" + i + "'>";
-                for (var j = 0; j < this.width; j++)
-                    html += "<td width='10' class='x" + j + "'></td>";
-                html += "</tr>";
-            }
-            this.own.html(html);
-        };
-        /**
-         * Metodo criado para desenhar a comida na arena
-         */
-        Arena.prototype.paintFood = function () {
-            this.cleanFood();
-            //Lets paint the food
-            this.paintCell(this.food.pointer.x, this.food.pointer.y, "activeFood");
-            //Lets paint the score
-            $(".score").text(this.snake.score.toString());
-        };
-        /**
-         * Metodo criado para desenhar a cobra(personagem) na arena
-         */
-        Arena.prototype.paintSnake = function () {
-            var _this = this;
-            if (this.own.find("tr td.activeSnake").length === this.snake.pointers.length) {
-                this.mosey();
-            }
-            else {
-                this.cleanSnake();
-                this.snake.pointers.forEach(function (pointer) {
-                    _this.paintCell(pointer.x, pointer.y);
-                });
-            }
-            this.paintSnakeHead();
-        };
-        Arena.prototype.paintHighScore = function () {
-            $(".bestScore").text(this.highScore.highScoreToString());
-        };
-        /**
-         * Metodo criado para desenhar a cobra(personagem) na arena
-         */
-        Arena.prototype.paintSnakeHead = function () {
-            this.cleanSnakeHead();
-            this.paintCell(this.snake.head.x, this.snake.head.y, "activeSnakeHead");
-        };
-        /**
-         * Remove a ultima celula(ou ultimo ponto) da tela, no caso, remove a celula que antecede o rabo da cobra
-         */
-        Arena.prototype.clearLastCell = function () {
-            this.eraseCell(this.snake.before_tail.x, this.snake.before_tail.y);
         };
         /**
          * Verifica a direção da cobra e atribui um passo a partir da direção estipulada no momento
@@ -234,14 +121,6 @@ var Model;
                 this.snake.head.y == this.food.pointer.y;
         };
         /**
-         * Verifica se o score atual é melhor que o HighScore
-         */
-        Arena.prototype.verifyAndChangeHighScore = function () {
-            if (this.highScore.isBestScore(this.snake.score.actual)) {
-                this.paintHighScore();
-            }
-        };
-        /**
          * Verifica se a cobra não comeu a si mesmo no jogo
          */
         Arena.prototype.checkCollision_old = function () {
@@ -261,15 +140,6 @@ var Model;
             return this.matriz[this.snake.face.y][this.snake.face.x].whatIsIt == Model.WhatIsThisTypes.Snake;
         };
         /**
-         * "Move" a cobra, de maneira que não precise a sobrescrever totalmente
-         */
-        Arena.prototype.mosey = function () {
-            // Isto é, limpa o ultimo ponto da cobra(no caso o ponto que é anterior ao rabo)
-            this.clearLastCell();
-            // E depois, imprime o novo ponto da cobra(no caso o ponto que ficava após a cabeça[a face])
-            this.paintCell(this.snake.face.x, this.snake.face.y);
-        };
-        /**
          * Metodo criado para gerenciar as alteções de ponteiros que acontecem no jogo
          */
         Arena.prototype.changePointers = function () {
@@ -287,10 +157,6 @@ var Model;
                 pointY = Math.round(Math.random() * (this.height));
                 this.food.create_food(pointX, pointY);
                 this.matriz[pointY][pointX].whatIsIt = Model.WhatIsThisTypes.Food;
-                // - E então imprimimos a mesma na tela
-                this.paintFood();
-                // Verifica se o score atual é maior que o highScore
-                this.verifyAndChangeHighScore();
                 // Aumenta a velocidade da cobra
                 this.speedUpSnake();
             }
@@ -314,6 +180,6 @@ var Model;
             console.log(this.speed);
         };
         return Arena;
-    })();
+    }());
     Model.Arena = Arena;
 })(Model || (Model = {}));

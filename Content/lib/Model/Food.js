@@ -19,6 +19,6 @@ var Model;
             };
         };
         return Food;
-    })();
+    }());
     Model.Food = Food;
 })(Model || (Model = {}));

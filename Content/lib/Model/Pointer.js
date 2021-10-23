@@ -14,6 +14,6 @@ var Model;
             this.whatIsIt = whatIsIt || Model.WhatIsThisTypes.Null;
         }
         return Pointer;
-    })();
+    }());
     Model.Pointer = Pointer;
 })(Model || (Model = {}));

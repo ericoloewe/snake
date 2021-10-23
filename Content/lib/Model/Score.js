@@ -43,6 +43,6 @@ var Model;
             return "HIGH SCORE: " + this.actual;
         };
         return Score;
-    })();
+    }());
     Model.Score = Score;
 })(Model || (Model = {}));

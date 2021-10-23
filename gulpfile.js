@@ -2,9 +2,8 @@ var gulp = require("gulp");
 var tsc = require("gulp-typescript");
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
-var sass = require('gulp-sass');
 
-gulp.task("default", ["compiler", "sass"]);
+gulp.task("default", ["compiler"]);
 
 gulp.task("compiler", function() {
     var tsconfig = tsc.createProject("tsconfig.json");
@@ -23,13 +22,6 @@ gulp.task("compiler", function() {
                 .pipe(concat("main.min.js"))
                 .pipe(uglify())
                 .pipe(gulp.dest("./"));
-});
- 
-gulp.task('sass', function () {
-    return gulp.src("./Content/Styles/*.scss")
-        .pipe(concat("main.min.css"))
-        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))        
-        .pipe(gulp.dest('./'));
 });
 
 gulp.task("watch", function() {

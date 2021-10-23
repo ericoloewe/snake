@@ -36,6 +36,6 @@ var Model;
             });
         };
         return Snake;
-    })();
+    }());
     Model.Snake = Snake;
 })(Model || (Model = {}));
